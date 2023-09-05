@@ -1,26 +1,37 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import AceEditor from "react-ace";
+import { useEffect } from "react";
+
+import AceEditor from "react-ace"; // Import the AceEditor component
+import "ace-builds/src-noconflict/theme-monokai"; // Import the Ace theme
+import "ace-builds/src-noconflict/mode-c_cpp"; // Import the Ace mode for C/C++
+import "ace-builds/src-noconflict/mode-php"; // Import the Ace mode for PHP
+import "ace-builds/src-noconflict/mode-python"; // Import the Ace mode for Python
+import "ace-builds/src-noconflict/mode-javascript"; // Import the Ace mode for JavaScript
 import $ from "jquery";
 
-import "ace-builds/src-noconflict/mode-c_cpp";
-import "ace-builds/src-noconflict/mode-php";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-monokai";
-
 export default function Home() {
-  const [language, setLanguage] = useState("c");
-  const [code, setCode] = useState("");
-
   useEffect(() => {
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/c_cpp");
+
+    function changeLanguage() {
+      const language = $("#languages").val();
+      if (language === "c" || language === "cpp")
+        editor.session.setMode("ace/mode/c_cpp");
+      else if (language === "php") editor.session.setMode("ace/mode/php");
+      else if (language === "python") editor.session.setMode("ace/mode/python");
+      else if (language === "node")
+        editor.session.setMode("ace/mode/javascript");
+    }
+
     function executeCode() {
       $.ajax({
         url: "/api/compiler",
         method: "POST",
         data: {
-          language,
-          code,
+          language: $("#languages").val(),
+          code: editor.getSession().getValue(),
         },
         success: function (response) {
           $(".output").text(response);
@@ -28,8 +39,9 @@ export default function Home() {
       });
     }
 
+    $("#languages").on("change", changeLanguage);
     $(".btn").on("click", executeCode);
-  }, [language, code]);
+  }, []);
 
   return (
     <div>
@@ -40,27 +52,17 @@ export default function Home() {
       <div className="header">RookieScript</div>
       <div className="control-panel">
         Select Language: &nbsp; &nbsp;
-        <select
-          id="languages"
-          className="languages"
-          onChange={(e) => setLanguage(e.target.value)}
-        >
-          <option value="c">C</option>
-          <option value="cpp">C++</option>
-          <option value="php">PHP</option>
-          <option value="python">Python</option>
-          <option value="node">Node JS</option>
+        <select id="languages" className="languages">
+          {/* ... */}
         </select>
       </div>
       <AceEditor
-        mode={language === "node" ? "javascript" : language}
-        theme="monokai"
+        mode="c_cpp" // Set the default mode here
+        theme="monokai" // Set the default theme here
         name="editor"
         editorProps={{ $blockScrolling: true }}
-        value={code}
-        onChange={(newCode) => setCode(newCode)}
-        style={{ height: "400px" }}
       />
+
       <div className="button-container">
         <button className="btn">Run</button>
       </div>
