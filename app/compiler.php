@@ -38,7 +38,16 @@ if ($language == "java") {
     fwrite($programFile, $code);
     fclose($programFile);
 
-    shell_exec("javac $filePath 2>&1");
+    $output = shell_exec("javac $filePath 2>&1");
+
+    // Get a list of files in the directory (excluding '.' and '..')
+    $files = array_diff(scandir("D:\\xampp\htdocs\RookieScriptCompiler\app\\temp\\"), array('..', '.'));
+
+    $fileCount = count($files);
+
+    if (!($fileCount === 2)) {
+        echo $output;
+    }
 
     // Get a list of files in the directory
     $files = glob("D:\\xampp\htdocs\RookieScriptCompiler\app\\temp\\" . '/*');
