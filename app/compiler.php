@@ -1,5 +1,9 @@
 <?php
 $language = strtolower($_POST['language']);
+
+if ($language == "python"){
+    $language = "py";
+}
 $code = $_POST['code'];
 
 $random = substr(md5(mt_rand()), 0, 7);
