@@ -17,9 +17,9 @@ if ($language == "php") {
     if ($output === null) {
         echo "Command execution failed.";
     } else {
-        echo "Command output: " . $output;
+        echo  $output;
     }
-    echo $filePath, " ", $output;
+   
 }
 if ($language == "py") {
     $output = shell_exec("python $filePath 2>&1");
@@ -41,9 +41,10 @@ if ($language == "java") {
     $programFile = fopen($filePath, "w");
     fwrite($programFile, $code);
     fclose($programFile);
-
+    sleep(3);
     $output = shell_exec("javac $filePath 2>&1");
 
+    sleep(1);
     // Get a list of files in the directory (excluding '.' and '..')
     $files = array_diff(scandir("D:\\xampp\htdocs\RookieScriptCompiler\app\\temp\\"), array('..', '.'));
 
@@ -51,10 +52,10 @@ if ($language == "java") {
 
     if (!($fileCount === 2)) {
         echo $output;
-    }
+    }else{
+        // Get a list of files in the directory
+    $files = glob("D:\\xampp\htdocs\RookieScriptCompiler\app\\temp\\*.class");
 
-    // Get a list of files in the directory
-    $files = glob("D:\\xampp\htdocs\RookieScriptCompiler\app\\temp\\" . '/*');
 
     // Sort the files by their creation time in descending order
     usort($files, function ($a, $b) {
@@ -69,9 +70,10 @@ if ($language == "java") {
         // $lastCreatedFileName = basename($lastCreatedFile);
         // echo "The last created file is: $lastCreatedFileName";
         $command = 'cd "D:\\xampp\\htdocs\\RookieScriptCompiler\\app\\temp\\" && java ' . $lastCreatedFileName . ' 2>&1';
-        $output = shell_exec($command);
+        $output = shell_exec($command);      
         echo $output;
     } else {
         echo "No files found";
-    }
+}}
+
 }
